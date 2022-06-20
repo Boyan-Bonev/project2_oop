@@ -17,6 +17,7 @@ class Planet : public Printable {
     Planet& operator = (const Planet& other);
     ~Planet();
 
+    
     void sortJedis();
     int idxOfJedi (const MyString& jedi_name) const;
     bool alreadyExists(const MyString& jedi_name) const;

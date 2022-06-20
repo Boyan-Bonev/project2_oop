@@ -77,14 +77,28 @@ int validCommand (const MyString& input) {
     return INCORRECT;
 }
 
+double toDouble(const MyString& input, int start, int stop) {
+    unsigned long long int m = 1;
+    double ret = 0;
+    int len = strlen(input.getString());
+    char* string = new char [len+1];
+    strcpy_s(string,len + 1,input.getString());
+    for (int i = stop; i >= start; i--) {
+        ret += (string[i] - '0') * m;
+        m *= 10;
+    }
+    return ret;
+}
+
 void activateCommand (const MyString& input, Universe& universe) {
     int command = validCommand(input);
-    MyString planetName, jediName, multiplierString, jediRank, secondPlanetName;
+    MyString planetName, jediName, multiplierString, jediRank, secondPlanetName, jediAge, jediStrength,saberColor;
     int len = strlen(input.getString());
     char* string = new char [len+1];
     strcpy_s(string,len + 1,input.getString());
     switch (command) {
         case INCORRECT: printHelp(); break;
+        
         case ADD : 
         {   
             int beginning = strlen("add_planet <");
@@ -97,16 +111,61 @@ void activateCommand (const MyString& input, Universe& universe) {
             universe.addPlanet(planetName);
             break;
         }
+
         case CREATE : 
         {
-
-            fillThisIn;
+            //"create_jedi <planet_name> <jedi_name> <jedi_rank> <jedi_age> <saber_color> <jedi_strength>\n"
+            int beginning = strlen("create_jedi <"), i = 0;
+            for (i = beginning; i < len; i++) { // the symbol after "add_planet <"
+                if (string[i] != '>') {
+                    planetName.push_back(string[i]);
+                }
+                else break; // breaks when it reaches >
+            }
+            i+= 2;
+            for (i; i < len; i++) {
+                if (string[i] != '>') {
+                    jediName.push_back(string[i]);
+                }
+                else break; // breaks when it reaches >
+            }
+            i+= 2;
+            for (i; i < len; i++) {
+                if (string[i] != '>') {
+                    jediRank.push_back(string[i]);
+                }
+                else break; // breaks when it reaches >
+            }
+            for (i; i < len; i++) {
+                if (string[i] != '>') {
+                    jediAge.push_back(string[i]);
+                }
+                else break; // breaks when it reaches >
+            }
+            int age = (int)toDouble(jediAge,0,jediAge.getSize());
+            i+= 2;
+            for (i; i < len; i++) {
+                if (string[i] != '>') {
+                    saberColor.push_back(string[i]);
+                }
+                else break; // breaks when it reaches >
+            }
+            i+= 2;
+            for (i; i < len; i++) {
+                if (string[i] != '>') {
+                    jediStrength.push_back(string[i]);
+                }
+                else break; // breaks when it reaches >
+            }
+            double strength = toDouble(jediStrength, 0, jediStrength.getSize());
+            universe.createJedi(planetName,jediName,jediRank,age,saberColor,strength);
             break;
         }
+
         case REMOVE : 
         {
             int beginning = strlen("removeJedi <"), i = 0;
-            for (i; i < len; i++) {
+            for (i = beginning; i < len; i++) {
                 if (string[i] != '>') {
                     jediName.push_back(string[i]);
                 }
@@ -122,10 +181,11 @@ void activateCommand (const MyString& input, Universe& universe) {
             universe.removeJedi(jediName,planetName);
             break;
         }
+
         case PROMOTE :
         {
             int beginning = strlen("promote_jedi <"), i = 0;
-            for (i; i < len; i++) {
+            for (i = beginning; i < len; i++) {
                 if (string[i] != '>') {
                     jediName.push_back(string[i]);
                 }
@@ -138,14 +198,15 @@ void activateCommand (const MyString& input, Universe& universe) {
                 }
                 else break; // breaks when it reaches >
             }
-            double multiplier = stringToDouble(multiplierString);
+            double multiplier = toDouble(multiplierString.getString(),0,multiplierString.getSize());
             universe.promoteJedi(jediName,multiplier);
             break;
         }
+
         case DEMOTE :
         {
             int beginning = strlen("demote_jedi <"), i = 0;
-            for (i; i < len; i++) {
+            for (i = beginning; i < len; i++) {
                 if (string[i] != '>') {
                     jediName.push_back(string[i]);
                 }
@@ -158,10 +219,11 @@ void activateCommand (const MyString& input, Universe& universe) {
                 }
                 else break; // breaks when it reaches >
             }
-            double multiplier = stringToDouble(multiplierString);
+            double multiplier = toDouble(multiplierString.getString(),0,multiplierString.getSize());
             universe.demoteJedi(jediName,multiplier);
             break;
         }
+
         case STRONGEST :
         {
             int beginning = strlen("get_strongest_jedi <");
@@ -174,10 +236,11 @@ void activateCommand (const MyString& input, Universe& universe) {
             universe.getStrongestJedi(planetName);
             break;
         }
+
         case YOUNGEST : 
         {
             int beginning = strlen("get_youngest_jedi <"), i = 0;
-            for (i; i < len; i++) {
+            for (i = beginning; i < len; i++) {
                 if (string[i] != '>') {
                     planetName.push_back(string[i]);
                 }
@@ -193,10 +256,11 @@ void activateCommand (const MyString& input, Universe& universe) {
             universe.getYoungestJedi(planetName,Rank(jediRank));
             break;
         }
+
         case MOST_USED :
         {
             int beginning = strlen("get_most_used_saber_color <"), i = 0;
-            for (i; i < len; i++) {
+            for (i = beginning; i < len; i++) {
                 if (string[i] != '>') {
                     planetName.push_back(string[i]);
                 }
@@ -217,10 +281,11 @@ void activateCommand (const MyString& input, Universe& universe) {
             }
             break;
         }
+
         case PRINT :
         {
             int beginning = strlen("print <"), i = 0;
-            for (i; i < len; i++) {
+            for (i = beginning; i < len; i++) {
                 if (string[i] != '>') {
                     planetName.push_back(string[i]);
                 }
@@ -239,6 +304,7 @@ void activateCommand (const MyString& input, Universe& universe) {
             }
             break;
         }
+
         case SORT_PRINT : 
         {
             // skip < 
@@ -259,6 +325,7 @@ void activateCommand (const MyString& input, Universe& universe) {
             universe.sortedNames(planetName,secondPlanetName);
             break;
         }
+
         case END : 
         {
             cout << "Ending this dialogue!\n";

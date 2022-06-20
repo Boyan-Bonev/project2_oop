@@ -153,7 +153,7 @@ void Universe::getStrongestJedi(const MyString& planet_name) {
     cout << "No planet named" << planet_name << "exists in this universe!\n";
 }
 
-void Universe::getYoungestJedi (const MyString& planet_name, const Rank& jedi_rank) {
+ Universe::getYoungestJedi (const MyString& planet_name, const Rank& jedi_rank) {
     for (int i = 0; i < size; i++) {
         if (planets[i].planetName == planet_name) {
             planets[i].getYoungestJedi(jedi_rank);

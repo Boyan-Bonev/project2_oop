@@ -17,7 +17,7 @@ class Universe : public Printable {
     int getSize () const { return size; }
     MyString& getPlanetName (int idx) const { return planets[idx].planetName; }
     void printPlanet (int idx) const { planets[idx].print(); }
-    void printJedi (int idx, const MyString& name ) const { planets[idx]}
+    void printJedi (const MyString& name) const;
 
     bool planetExists(const MyString& name);
     bool jediExists(const MyString& name);
