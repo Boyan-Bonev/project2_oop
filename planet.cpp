@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include "planet.h"
 #include "myString.h"
 #include "jedi.h"
@@ -80,6 +81,25 @@ void Planet::readPlanet(std::istream& is) {
             doubleCap();
         }
         jedis[size].readJedi(is);
+    }
+}
+
+void Planet::sortJedis() {
+    int minIdx = 0;
+    Jedi tempJedi;
+    for (int i = 0; i < size; i++) {
+        minIdx = i;
+        for (int j = i + 1; j < size; j++) {
+            if (strcmp(jedis[i].name.getString(),jedis[j].name.getString()) > 0) 
+            // j before i 
+            {
+                minIdx = j;
+            }
+        }
+        // temp = a, a = b, b = temp
+        tempJedi = jedis[i];
+        jedis[i] = jedis[minIdx];
+        jedis[minIdx] = tempJedi;
     }
 }
 
@@ -243,30 +263,40 @@ void Planet::print(std::ostream& os) const {
     }
 }
 
-void readFromFile(const char* name, Planet& planet) {
+void Planet::readFromFile(const char* name) {
     std::ifstream in;
     in.open(name);
     if (in) {
-        in >> planet;
+        in >> *this;
     }
     in.close();
 }
 
-bool writeToFile(const char* name, Planet& planet) {
+bool Planet::writeToFile(const char* name) {
     std::ofstream out;
     out.open(name);
     if (!out) {
         return false;
     }
-    out << planet;
+    out << *this;
     out.close();
     return true;
 }
 
 std::ostream& operator << (std::ostream& os, const Planet& planet) {
-    planet.print(os);
+    os << planet.planetName << '|' << planet.size << endl;
+    for (int i = 0; i < planet.size; i++) {
+        os << planet.jedis[i];
+    }
+    return os;
 }
 
 std::istream& operator >> (std::istream& is, Planet& planet) {
-    planet.readPlanet(is);
+    is >> planet.planetName;
+    int count = 0;
+    is >> count; is.get();
+    for (planet.size; planet.size < count; (planet.size)++) {
+        is >> planet.jedis[planet.size];
+    }
+    return is;
 }

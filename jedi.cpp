@@ -52,13 +52,13 @@ bool Jedi::operator != (const Jedi& other) {
 }
 
 std::ostream& operator << (std::ostream& os, const Jedi& jedi) {
-    os << jedi.name << ", " << jedi.age << "years old, wields a " << jedi.saberColor << "saber with " << jedi.power << "power";
+    os << jedi.name << '|' << jedi.age << '|' << jedi.rank << '|' << jedi.saberColor << '|' << jedi.power << '\n';
     return os;
 }
 std::istream& operator >> (std::istream& is, Jedi& jedi) {
     is >> jedi.name;
-    is >> jedi.rank; is.get();
     is >> jedi.age; is.get();
+    is >> jedi.rank;
     is >> jedi.saberColor;
     is >> jedi.power; is.get();
     return is;
@@ -70,22 +70,22 @@ void Jedi::print (std::ostream& os) const {
     os << " ,wields a " << saberColor << " saber and beholds " << power << "power.";
 }
 
-void Jedi::readFromFile(const char* name, Jedi& jedi) {
+void Jedi::readFromFile(const char* name) {
     std::ifstream in;
     in.open(name);
     if (in) {
-        in >> jedi;
+        in >> *this;
     }
     in.close();
 }
 
-bool writeToFile(const char* name, Jedi& jedi) {
+bool Jedi::writeToFile(const char* name) {
     std::ofstream out;
     out.open(name);
     if (!out) {
         return false;
     }
-    out << jedi;
+    out << *this;
     out.close();
     return true;
 }

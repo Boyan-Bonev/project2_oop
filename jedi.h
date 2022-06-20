@@ -23,11 +23,12 @@ class Jedi : public Printable {
     void demoteJedi (double multiplier);
     bool operator != (const Jedi& other);
     friend class Planet;
+    friend class Universe;
     friend std::ostream& operator << (std::ostream& os, const Jedi& jedi);
     friend std::istream& operator >> (std::istream& is, Jedi& jedi);
     void print(std::ostream& os = std::cout) const override;
-    void readFromFile(const char* name, Jedi& jedi);
-    bool writeToFile(const char* name, Jedi& jedi);
+    void readFromFile(const char* name);
+    bool writeToFile(const char* name);
     
 };
 

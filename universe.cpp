@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cstring>
+#include <fstream>
 #include "universe.h"
 #include "planet.h"
 
@@ -42,6 +44,36 @@ Universe& Universe::operator = (const Universe& other) {
 
 Universe::~Universe() {
     delete[] planets;
+}
+
+void Universe::printJedi (const MyString& name) const {
+    for (int i = 0; i < size; i++) {
+        if (planets[i].alreadyExists(name)) {
+            for (int j = 0; j < size; j++) {
+                if (planets[i].jedis[j].name == name) {
+                    planets[i].jedis[j].print();
+                }
+            }
+        }
+    }
+}
+
+bool Universe::planetExists(const MyString& name) {
+    for (int i = 0; i < size; i++) {
+        if (planets[i].planetName == name) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Universe::jediExists(const MyString& name) {
+    for (int i = 0; i < size; i++) {
+        if (planets[i].alreadyExists(name)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void Universe::readUniverse(std::istream& is) {
@@ -151,6 +183,68 @@ void Universe::getMostUsedSaberColor (const MyString& planet_name) {
     cout << "No planet named" << planet_name << "exists in this universe!\n";
 }
 
+void Universe::sortedNames (const MyString& firstPlanet, const MyString& secondPlanet) {
+    int firstPlanetIdx = -1, secondPlanetIdx = -1, i = 0;
+    do {
+        if (planets[i].planetName == firstPlanet) {
+            firstPlanetIdx = i;
+        }
+        if (planets[i].planetName == secondPlanet) {
+            secondPlanetIdx = i;
+        }
+        i++;
+    }
+    while (firstPlanetIdx == -1 || secondPlanetIdx == -1 || i < size);
+
+    if (firstPlanetIdx != -1) {
+        planets[firstPlanetIdx].sortJedis();
+    }
+    if (secondPlanetIdx != -1) {
+        planets[secondPlanetIdx].sortJedis();
+    }
+    if (firstPlanetIdx == -1 && secondPlanetIdx == -1) {
+        cout << "Neither of those names match the planets in this universe!\n";
+    }
+    else if (firstPlanetIdx == -1 && secondPlanetIdx != -1) {
+        cout << "Only planet" << secondPlanet << "exists. Printing out its sorted habitants.\n";
+        planets[secondPlanetIdx].println();
+    }
+    else if (firstPlanetIdx != -1 && secondPlanetIdx == -1) {
+        cout << "Only planet" << firstPlanet << "exists. Printing out its sorted habitants.\n";
+        planets[firstPlanetIdx].println();
+    }
+    else {
+        int firstIdx = 0, secondIdx = 0, comparison = 0;
+        do {
+            // compare the jedis' names at both indexes
+            if (firstIdx == planets[firstPlanetIdx].size) {
+                comparison = 1;
+            }
+            if (secondIdx == planets[secondPlanetIdx].size) {
+                comparison = -1;
+            }
+            if (firstIdx < planets[firstPlanetIdx].size && secondIdx < planets[secondPlanetIdx].size) {
+                comparison = strcmp(planets[firstPlanetIdx].jedis[firstIdx].name.getString(),
+                                    planets[secondPlanetIdx].jedis[secondIdx].name.getString());
+            }
+            if (comparison > 0) // first dismatch of chars: ch of 1 > ch of 2 --> 2 is before 1 --> print out 2 
+            {
+                planets[secondPlanetIdx].jedis[secondIdx++].println();
+            }
+            if (comparison == 0) // strings are equal --> print out both 
+            {
+                planets[firstPlanetIdx].jedis[firstIdx++].println();
+                planets[secondPlanetIdx].jedis[secondIdx++].println();
+            }
+            if (comparison > 0) // first dismatch chars: ch of 1 < ch of 2 --> 1 is before 2 --> print out 1 
+            {
+                planets[firstPlanetIdx].jedis[firstIdx++].println();
+            }
+        }
+        while (firstIdx < planets[firstPlanetIdx].size || secondIdx < planets[secondPlanetIdx].size);
+    }
+}
+
 bool Universe::operator != (const Universe& other) {
     if (size != other.size || capacity != other.capacity) {
         return true;
@@ -171,9 +265,38 @@ void Universe::print(std::ostream& os) const {
 }
 
 std::ostream& operator << (std::ostream& os, const Universe& universe) {
-    universe.print(os);
+    os << universe.size << endl;
+    for (int i = 0; i < universe.size; i++) {
+        os << universe.planets[i];
+    }
+    return os;
 }
 
 std::istream& operator >> (std::istream& is, Universe& universe) {
-    universe.readUniverse(is);
+    int count;
+    is >> count; is.get();
+    for (universe.size; universe.size < count; (universe.size)++) {
+        is >> universe.planets[universe.size];
+    }
+    return is;
+}
+
+void Universe::readFromFile(const char* name) {
+    std::ifstream in;
+    in.open(name);
+    if (in) {
+        in >> *this;
+    }
+    in.close();
+}
+
+bool Universe::writeToFile(const char* name) {
+    std::ofstream out;
+    out.open(name);
+    if (!out) {
+        return false;
+    }
+    out << *this;
+    out.close();
+    return true;
 }

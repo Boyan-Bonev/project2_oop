@@ -17,6 +17,7 @@ class Planet : public Printable {
     Planet& operator = (const Planet& other);
     ~Planet();
 
+    void sortJedis();
     int idxOfJedi (const MyString& jedi_name) const;
     bool alreadyExists(const MyString& jedi_name) const;
     Planet(const MyString& _planetName, const Jedi* _jedis, int jedisCount);
@@ -32,8 +33,8 @@ class Planet : public Printable {
     char* getMostUsedSaberColor (const Rank& jedi_rank) const;
     bool operator != (const Planet& other);
     void print(std::ostream& os = std::cout) const override;
-    void readFromFile(const char* name, Planet& planet);
-    bool writeToFile(const char* name, Planet& planet);
+    void readFromFile(const char* name);
+    bool writeToFile(const char* name);
     friend std::ostream& operator << (std::ostream& os, const Planet& planet);
     friend std::istream& operator >> (std::istream& is, Planet& planet);
 

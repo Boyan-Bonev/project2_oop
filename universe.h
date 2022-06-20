@@ -14,6 +14,13 @@ class Universe : public Printable {
     Universe& operator = (const Universe& other);
     ~Universe();
 
+    int getSize () const { return size; }
+    MyString& getPlanetName (int idx) const { return planets[idx].planetName; }
+    void printPlanet (int idx) const { planets[idx].print(); }
+    void printJedi (int idx, const MyString& name ) const { planets[idx]}
+
+    bool planetExists(const MyString& name);
+    bool jediExists(const MyString& name);
     void readUniverse(std::istream& is = std::cin);
     void addPlanet(const MyString& planet_name);
     void createJedi(const MyString& planet_name, const MyString& jedi_name, 
@@ -25,9 +32,12 @@ class Universe : public Printable {
     void getYoungestJedi (const MyString& planet_name, const Rank& jedi_rank);
     void getMostUsedSaberColor (const MyString& planet_name, const Rank& jedi_rank);
     void getMostUsedSaberColor (const MyString& planet_name);
+    void sortedNames (const MyString& firstPlanet, const MyString& secondPlanet);
 
     bool operator != (const Universe& other);
     void print(std::ostream& os = std::cout) const override;
+    void readFromFile(const char* name);
+    bool writeToFile(const char* name);
 
     friend std::ostream& operator << (std::ostream& os, const Universe& universe);
     friend std::istream& operator >> (std::istream& is, Universe& universe);
