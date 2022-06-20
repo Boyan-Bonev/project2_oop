@@ -63,6 +63,7 @@ MyString::MyString(const MyString& other) {
 
 //mutators and selectors
 void MyString::readString (std::istream& is = std::cin) {
+    size = 0;
     char c;
     do {
         is.get(c);
@@ -135,6 +136,13 @@ bool MyString::removeSubString (const MyString& subString) {
     else return false;
 }
 
+bool MyString::operator == (const MyString& other) {
+    if (!strcpy(m_string,other.m_string)) {
+        return true;
+    }
+    return false;
+}
+
 MyString& MyString::operator = (const MyString& other) {
     if (this != &other) {
         delete[] m_string;
@@ -168,7 +176,14 @@ MyString& MyString::operator = (const char* source) {
     return *this;
 }
 
-std::ostream& operator << (std::ostream& os, MyString const& string) {
+bool MyString::operator != (const MyString& other) {
+    if (strcpy(m_string,other.m_string) || capacity != other.capacity) {
+        return true;
+    }
+    return false;
+}
+
+std::ostream& operator << (std::ostream& os, const MyString& string) {
     return os << string.getString();
 }
 

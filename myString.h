@@ -1,7 +1,5 @@
 #ifndef MYSTRING_H
 #define MYSTRING_H
-
-#include <iostream>
  
 class MyString {
     char* m_string;
@@ -30,10 +28,12 @@ class MyString {
     void pop () { size--;}
     void print () const;
 
+    bool operator == (const MyString& other);
     MyString& operator = (char* source);
     MyString& operator = (const char* source);
     MyString& operator = (const MyString& other);
-    friend std::ostream& operator << (std::ostream& os, MyString const& string);
+    bool operator != (const MyString& other);
+    friend std::ostream& operator << (std::ostream& os, const MyString& string);
     friend std::istream& operator >> (std::istream& is, MyString& string);
 
 };
